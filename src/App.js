@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import JobInfo from "./components/JobInfo";
+import BtnContainer from "./components/BtnContainer";
+const url = "https://course-api.com/react-tabs-project";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [jobs, setJobs] = useState([]);
+  const [currentItem,setCurrentItem] = useState(0)
 
+  //current item
+
+  const fetchJobs = async () => {
+    const response = await fetch(url);
+    const newJobs = await response.json();
+    setJobs(newJobs);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  if(isLoading){
+    return <section className="jobs-center">
+      <div className="loading"></div>
+    </section>
+  }
+  return <section className="jobs-center">
+    {/* button container */}
+    <BtnContainer jobs={jobs} currentItem={currentItem} setCurrentItem={setCurrentItem}/>
+    {/* job info */}
+    <JobInfo jobs={jobs} currentItem={currentItem}/>
+  </section>
+};
 export default App;
